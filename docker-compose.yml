@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  plant-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_RELOAD=false
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-this}
+      - AGENT_NAME=EmpowerPlantAgent
+      - AGENT_DESCRIPTION=An AI agent for plant empowerment tasks
+      - MAX_TOKENS=1000
+      - TEMPERATURE=0.7
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a reverse proxy (uncomment if needed)
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - plant-agent
+  #   restart: unless-stopped
