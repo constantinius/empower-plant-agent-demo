@@ -88,7 +88,7 @@ async def get_agents_info():
                 "description": PLANT_AGENT_DESCRIPTION,
                 "model": plant_agent.model,
                 "endpoint": "/api/v1/chat/plant",
-                "tools": ["get-plant-care-guide"],
+                "tools": ["get-plant-care-guide", "calculate_watering_schedule"],
                 "handoffs": ["ShoppingAgent"],
             },
             {
@@ -110,7 +110,7 @@ async def get_plant_agent_info():
         "name": PLANT_AGENT_NAME,
         "description": PLANT_AGENT_DESCRIPTION,
         "model": plant_agent.model,
-        "tools": ["get-plant-care-guide"],
+        "tools": ["get-plant-care-guide", "calculate_watering_schedule"],
         "handoffs": ["ShoppingAgent"],
     }
 
