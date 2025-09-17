@@ -4,10 +4,11 @@ A FastAPI-based multi-agent AI system with specialized agents for plant care and
 
 ## Features
 
-- 🤖 **Multi-Agent Architecture**: Two specialized AI agents with distinct capabilities
+- 🤖 **Multi-Agent Architecture**: Two specialized AI agents with intelligent handoff capabilities
 - 🔗 **MCP Integration**: Connects to external MCP servers with tool filtering per agent
-- 🌱 **Plant Care Agent**: Expert advice on plant health, care, and troubleshooting with local watering calculator
+- 🌱 **Plant Care Agent**: Expert advice on plant health, care, and troubleshooting
 - 🛒 **Shopping Agent**: Product discovery and checkout assistance
+- 🔄 **Smart Handoffs**: Agents automatically transfer conversations when expertise is needed
 - 🚀 **FastAPI Backend**: Modern, fast, and well-documented API
 - 📊 **Sentry Observability**: Comprehensive error tracking, performance monitoring, and insights
 - 🐳 **Docker Support**: Easy deployment with Docker and docker-compose
@@ -72,10 +73,14 @@ The system includes two specialized AI agents, each with their own set of tools 
 **Tools Available**:
 
 - **get-plant-care-guide** (MCP): Retrieves comprehensive plant care guides from the MCP server
+- **calculate_watering_schedule** (Local Function): Calculates personalized watering schedules based on plant type, pot size, season, and location
+
+**Smart Handoffs**: Automatically transfers to Shopping Agent when users ask about purchasing products, tools, or want to buy something
 
 **Example Usage**:
 
 ```bash
+# Get personalized watering advice
 curl -X POST "http://localhost:8000/api/v1/chat/plant" \
   -H "Content-Type: application/json" \
   -d '{
@@ -86,6 +91,12 @@ curl -X POST "http://localhost:8000/api/v1/chat/plant" \
       "season": "winter"
     }
   }'
+
+# The agent will automatically use the watering calculator to provide:
+# - Specific watering frequency (e.g., "every 7 days")
+# - Seasonal adjustments for winter care
+# - Pot size considerations
+# - Plant-specific tips for succulents
 ```
 
 ### 🛒 Shopping Agent (`/api/v1/chat/shopping`)
@@ -96,6 +107,8 @@ curl -X POST "http://localhost:8000/api/v1/chat/plant" \
 
 - **get-products** (MCP): Retrieves available products based on search criteria
 - **checkout** (MCP): Processes orders and handles the checkout flow
+
+**Smart Handoffs**: Automatically transfers to Plant Care Agent when users ask about plant care, gardening advice, plant health issues, or how to care for plants
 
 **Example Usage**:
 
@@ -110,6 +123,60 @@ curl -X POST "http://localhost:8000/api/v1/chat/shopping" \
     }
   }'
 ```
+
+## Smart Agent Handoffs
+
+The multi-agent system features intelligent handoffs that automatically transfer conversations between agents when specialized expertise is needed.
+
+### How Handoffs Work
+
+1. **Automatic Detection**: Each agent monitors the conversation for topics outside their expertise
+2. **Seamless Transfer**: When a handoff is needed, the agent automatically transfers the conversation
+3. **Context Preservation**: The receiving agent gets full context of the previous conversation
+4. **Transparent Process**: Users experience a smooth transition without interruption
+
+### Handoff Scenarios
+
+#### Plant Agent → Shopping Agent
+
+The Plant Care Agent will transfer to the Shopping Agent when users:
+
+- Ask about purchasing gardening tools or supplies
+- Want to buy fertilizers, pots, or plant accessories
+- Need product recommendations for plant care
+- Express interest in making a purchase
+
+**Example**:
+
+```
+User: "My plant needs better drainage. What should I buy?"
+Plant Agent: "For better drainage, you'll need... Let me transfer you to our shopping expert who can help you find the right products."
+→ Transfers to Shopping Agent
+```
+
+#### Shopping Agent → Plant Agent
+
+The Shopping Agent will transfer to the Plant Care Agent when users:
+
+- Ask about plant care, health, or troubleshooting
+- Need gardening advice or growing tips
+- Have questions about plant identification
+- Want help with plant problems
+
+**Example**:
+
+```
+User: "I bought this fertilizer, but my plant's leaves are still yellow. What's wrong?"
+Shopping Agent: "It sounds like there might be other factors affecting your plant's health. Let me connect you with our plant care expert."
+→ Transfers to Plant Care Agent
+```
+
+### Benefits
+
+- **Specialized Expertise**: Each agent focuses on what they do best
+- **Better User Experience**: Users get the most relevant help without switching manually
+- **Comprehensive Support**: Complete coverage from advice to purchase to ongoing care
+- **Natural Conversation Flow**: Handoffs feel like talking to a knowledgeable team
 
 ### Docker Deployment
 

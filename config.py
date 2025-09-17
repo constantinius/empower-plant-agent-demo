@@ -49,6 +49,15 @@ class Settings(BaseSettings):
         os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "1.0")
     )
 
+    # API Tester Configuration
+    api_tester_enabled: bool = os.getenv("API_TESTER_ENABLED", "true").lower() == "true"
+    api_tester_base_interval_ms: int = int(
+        os.getenv("API_TESTER_BASE_INTERVAL_MS", "120000")
+    )  # 2 minutes default
+    api_tester_jitter_percent: int = int(
+        os.getenv("API_TESTER_JITTER_PERCENT", "30")
+    )  # 30% jitter default
+
     class Config:
         env_file = ".env"
         case_sensitive = False

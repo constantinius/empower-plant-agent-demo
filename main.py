@@ -1,4 +1,14 @@
-"""Main FastAPI application for the AI Agent."""
+"""Main FastAPI application for the AI Agent.
+
+The application includes an integrated API tester that runs as a background task
+during the FastAPI lifespan. The tester periodically calls various API endpoints
+to simulate realistic usage patterns.
+
+Configuration:
+- API_TESTER_ENABLED: Enable/disable the API tester (default: true)
+- API_TESTER_BASE_INTERVAL_MS: Base interval between calls in milliseconds (default: 120000)
+- API_TESTER_JITTER_PERCENT: Percentage of jitter to add to intervals (default: 30)
+"""
 
 from contextlib import asynccontextmanager
 
@@ -8,6 +18,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
+from app.jobs import api_tester
 from config import settings
 
 sentry_sdk.init(
@@ -22,7 +33,21 @@ sentry_sdk.init(
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     print("🚀 Starting Multi-Agent API...")
+
+    # Start the API tester background task
+    try:
+        await api_tester.start()
+    except Exception as e:
+        print(f"⚠️  API tester failed to start: {e}")
+
     yield
+
+    # Stop the API tester background task
+    try:
+        await api_tester.stop()
+    except Exception as e:
+        print(f"⚠️  API tester failed to stop gracefully: {e}")
+
     print("🛑 Shutting down Multi-Agent API...")
 
 

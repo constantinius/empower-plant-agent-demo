@@ -6,6 +6,7 @@ pydantic==2.10.3
 pydantic-settings==2.7.0
 python-dotenv==1.0.1
 sentry-sdk[fastapi]==2.38.0
+eval_type_backport==0.2.2
 
 # Development dependencies
 pytest==8.3.4
