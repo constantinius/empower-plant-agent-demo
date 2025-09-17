@@ -38,6 +38,16 @@ class Settings(BaseSettings):
         "https://p01--empower-mcp--wc4d2bfkjcxy.kr842zyvg5.code.run/mcp",
     )
 
+    # Sentry Configuration
+    sentry_dsn: str = os.getenv("SENTRY_DSN", "")
+    sentry_environment: str = os.getenv("SENTRY_ENVIRONMENT", "development")
+    sentry_traces_sample_rate: float = float(
+        os.getenv("SENTRY_TRACES_SAMPLE_RATE", "1.0")
+    )
+    sentry_profiles_sample_rate: float = float(
+        os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "1.0")
+    )
+
     class Config:
         env_file = ".env"
         case_sensitive = False

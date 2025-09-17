@@ -8,7 +8,7 @@ A FastAPI-based AI agent specialized in plant care and empowerment, powered by t
 - 🔗 **MCP Integration**: Connects to external MCP servers to provide the agent with powerful tools
 - 🌱 **Specialized Plant Care AI**: Expert advice on plant health, care, and troubleshooting
 - 🚀 **FastAPI Backend**: Modern, fast, and well-documented API
-- 🔒 **API Key Authentication**: Secure endpoints with configurable API keys
+- 📊 **Sentry Observability**: Comprehensive error tracking, performance monitoring, and insights
 - 🐳 **Docker Support**: Easy deployment with Docker and docker-compose
 - 📚 **Interactive API Docs**: Built-in Swagger UI and ReDoc documentation
 - 🔧 **Configurable**: Environment-based configuration management
@@ -127,20 +127,67 @@ response = requests.post(
 print(response.json()["response"])
 ```
 
+## Observability with Sentry
+
+The application includes comprehensive observability through Sentry integration:
+
+### Features
+
+- **Error Tracking**: Automatic capture of exceptions and errors
+- **Performance Monitoring**: Transaction tracing for API requests and agent processing
+- **Custom Context**: Plant query context and metadata for better debugging
+- **Breadcrumbs**: Detailed execution flow tracking
+- **Release Tracking**: Version-based error tracking and deployment monitoring
+
+### Setup
+
+1. **Create a Sentry account** at [sentry.io](https://sentry.io)
+
+2. **Create a new project** for your Python/FastAPI application
+
+3. **Get your DSN** from the project settings
+
+4. **Configure environment variables**:
+
+   ```bash
+   SENTRY_DSN=https://your-dsn@sentry.io/project-id
+   SENTRY_ENVIRONMENT=production  # or development, staging, etc.
+   SENTRY_TRACES_SAMPLE_RATE=1.0  # 100% of transactions (adjust for production)
+   SENTRY_PROFILES_SAMPLE_RATE=1.0  # 100% profiling (adjust for production)
+   ```
+
+5. **For production**, consider reducing sample rates:
+   ```bash
+   SENTRY_TRACES_SAMPLE_RATE=0.1  # 10% of transactions
+   SENTRY_PROFILES_SAMPLE_RATE=0.1  # 10% profiling
+   ```
+
+### Monitoring Features
+
+- **Automatic Error Tracking**: All exceptions are automatically captured
+- **API Performance Monitoring**: FastAPI routes are automatically traced
+- **Database Query Tracing**: Automatic database performance monitoring
+- **HTTP Request Tracking**: Outbound HTTP requests are automatically traced
+- **Logging Integration**: Error-level logs are sent as Sentry events
+
 ## Configuration
 
 Configure the application using environment variables or the `.env` file:
 
-| Variable         | Description                  | Default                       |
-| ---------------- | ---------------------------- | ----------------------------- |
-| `OPENAI_API_KEY` | OpenAI API key               | Required                      |
-| `OPENAI_MODEL`   | OpenAI model to use          | `gpt-4`                       |
-| `API_HOST`       | Host to bind the server      | `0.0.0.0`                     |
-| `API_PORT`       | Port to bind the server      | `8000`                        |
-| `SECRET_KEY`     | Secret key for security      | `your-secret-key-change-this` |
-| `MAX_TOKENS`     | Maximum tokens per response  | `1000`                        |
-| `TEMPERATURE`    | AI response creativity (0-1) | `0.7`                         |
-| `MCP_SERVER_URL` | MCP server URL for tools     | `https://...`                 |
+| Variable                      | Description                        | Default                       |
+| ----------------------------- | ---------------------------------- | ----------------------------- |
+| `OPENAI_API_KEY`              | OpenAI API key                     | Required                      |
+| `OPENAI_MODEL`                | OpenAI model to use                | `gpt-4`                       |
+| `API_HOST`                    | Host to bind the server            | `0.0.0.0`                     |
+| `API_PORT`                    | Port to bind the server            | `8000`                        |
+| `SECRET_KEY`                  | Secret key for security            | `your-secret-key-change-this` |
+| `MAX_TOKENS`                  | Maximum tokens per response        | `1000`                        |
+| `TEMPERATURE`                 | AI response creativity (0-1)       | `0.7`                         |
+| `MCP_SERVER_URL`              | MCP server URL for tools           | `https://...`                 |
+| `SENTRY_DSN`                  | Sentry DSN for error tracking      | Optional                      |
+| `SENTRY_ENVIRONMENT`          | Sentry environment name            | `development`                 |
+| `SENTRY_TRACES_SAMPLE_RATE`   | Performance monitoring sample rate | `1.0`                         |
+| `SENTRY_PROFILES_SAMPLE_RATE` | Profiling sample rate              | `1.0`                         |
 
 ## Project Structure
 

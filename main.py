@@ -1,11 +1,19 @@
 """Main FastAPI application for the AI Agent."""
 
+import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
 from config import settings
+
+sentry_sdk.init(
+    dsn=settings.sentry_dsn,
+    environment=settings.sentry_environment,
+    traces_sample_rate=settings.sentry_traces_sample_rate,
+    profiles_sample_rate=settings.sentry_profiles_sample_rate,
+)
 
 # Create FastAPI app
 app = FastAPI(
