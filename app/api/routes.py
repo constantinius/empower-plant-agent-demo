@@ -2,13 +2,16 @@
 
 from fastapi import APIRouter, HTTPException
 
-from ..agents.plant_agent import AGENT_DESCRIPTION as PLANT_AGENT_DESCRIPTION
-from ..agents.plant_agent import AGENT_NAME as PLANT_AGENT_NAME
-from ..agents.plant_agent import plant_agent
-from ..agents.plant_agent import process_message as process_plant_message
-from ..agents.shopping_agent import AGENT_DESCRIPTION as SHOPPING_AGENT_DESCRIPTION
-from ..agents.shopping_agent import AGENT_NAME as SHOPPING_AGENT_NAME
-from ..agents.shopping_agent import process_shopping_message, shopping_agent
+from ..agents import (
+    PLANT_AGENT_DESCRIPTION,
+    PLANT_AGENT_NAME,
+    SHOPPING_AGENT_DESCRIPTION,
+    SHOPPING_AGENT_NAME,
+    plant_agent,
+    process_plant_message,
+    process_shopping_message,
+    shopping_agent,
+)
 from .models import ChatRequest, ChatResponse, HealthResponse
 
 # Initialize router
@@ -86,6 +89,7 @@ async def get_agents_info():
                 "model": plant_agent.model,
                 "endpoint": "/api/v1/chat/plant",
                 "tools": ["get-plant-care-guide"],
+                "handoffs": ["ShoppingAgent"],
             },
             {
                 "name": SHOPPING_AGENT_NAME,
@@ -93,6 +97,7 @@ async def get_agents_info():
                 "model": shopping_agent.model,
                 "endpoint": "/api/v1/chat/shopping",
                 "tools": ["get-products", "checkout"],
+                "handoffs": ["EmpowerPlantAgent"],
             },
         ]
     }
@@ -106,6 +111,7 @@ async def get_plant_agent_info():
         "description": PLANT_AGENT_DESCRIPTION,
         "model": plant_agent.model,
         "tools": ["get-plant-care-guide"],
+        "handoffs": ["ShoppingAgent"],
     }
 
 
@@ -117,4 +123,5 @@ async def get_shopping_agent_info():
         "description": SHOPPING_AGENT_DESCRIPTION,
         "model": shopping_agent.model,
         "tools": ["get-products", "checkout"],
+        "handoffs": ["EmpowerPlantAgent"],
     }

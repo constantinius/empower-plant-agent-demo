@@ -1,5 +1,7 @@
 """Main FastAPI application for the AI Agent."""
 
+from contextlib import asynccontextmanager
+
 import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
@@ -15,13 +17,23 @@ sentry_sdk.init(
     profiles_sample_rate=settings.sentry_profiles_sample_rate,
 )
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan context manager."""
+    print("🚀 Starting Multi-Agent API...")
+    yield
+    print("🛑 Shutting down Multi-Agent API...")
+
+
 # Create FastAPI app
 app = FastAPI(
-    title="Empower Plant Agent API",
-    description="AI-powered plant care and empowerment assistant",
+    title="Multi-Agent AI System API",
+    description="AI-powered multi-agent system with plant care and shopping assistants",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # Add CORS middleware
@@ -41,9 +53,10 @@ app.include_router(router, prefix="/api/v1", tags=["agent"])
 async def root():
     """Root endpoint with basic information."""
     return {
-        "message": "Welcome to the Empower Plant Agent API",
+        "message": "Welcome to the Multi-Agent AI System API",
         "docs": "/docs",
         "health": "/api/v1/health",
+        "agents": "/api/v1/agents/info",
         "version": "1.0.0",
     }
 
