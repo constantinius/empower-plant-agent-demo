@@ -14,7 +14,8 @@ class Settings(BaseSettings):
 
     # OpenAI Configuration
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4")
+    openai_model_expansive: str = os.getenv("OPENAI_MODEL_EXPANSIVE", "gpt-4")
+    openai_model_cheap: str = os.getenv("OPENAI_MODEL_CHEAP", "gpt-5-mini")
 
     # FastAPI Configuration
     api_host: str = os.getenv("API_HOST", "0.0.0.0")

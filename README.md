@@ -1,12 +1,13 @@
-# Empower Plant Agent Demo
+# Multi-Agent AI System Demo
 
-A FastAPI-based AI agent specialized in plant care and empowerment, powered by the openai-agents library and OpenAI's GPT models.
+A FastAPI-based multi-agent AI system with specialized agents for plant care and shopping, powered by the openai-agents library and OpenAI's GPT models.
 
 ## Features
 
-- 🤖 **OpenAI-Agents Integration**: Built using the official openai-agents library for robust AI agent functionality
-- 🔗 **MCP Integration**: Connects to external MCP servers to provide the agent with powerful tools
-- 🌱 **Specialized Plant Care AI**: Expert advice on plant health, care, and troubleshooting
+- 🤖 **Multi-Agent Architecture**: Two specialized AI agents with distinct capabilities
+- 🔗 **MCP Integration**: Connects to external MCP servers with tool filtering per agent
+- 🌱 **Plant Care Agent**: Expert advice on plant health, care, and troubleshooting with local watering calculator
+- 🛒 **Shopping Agent**: Product discovery and checkout assistance
 - 🚀 **FastAPI Backend**: Modern, fast, and well-documented API
 - 📊 **Sentry Observability**: Comprehensive error tracking, performance monitoring, and insights
 - 🐳 **Docker Support**: Easy deployment with Docker and docker-compose
@@ -60,6 +61,56 @@ A FastAPI-based AI agent specialized in plant care and empowerment, powered by t
 
 The API will be available at `http://localhost:8000`
 
+## Agents Overview
+
+The system includes two specialized AI agents, each with their own set of tools and capabilities:
+
+### 🌱 Plant Care Agent (`/api/v1/chat/plant`)
+
+**Purpose**: Provides expert advice on plant health, care, and troubleshooting
+
+**Tools Available**:
+
+- **get-plant-care-guide** (MCP): Retrieves comprehensive plant care guides from the MCP server
+
+**Example Usage**:
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/chat/plant" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "How often should I water my succulent in winter?",
+    "context": {
+      "plant_type": "succulent",
+      "pot_size": "small",
+      "season": "winter"
+    }
+  }'
+```
+
+### 🛒 Shopping Agent (`/api/v1/chat/shopping`)
+
+**Purpose**: Helps users find products and complete purchases
+
+**Tools Available**:
+
+- **get-products** (MCP): Retrieves available products based on search criteria
+- **checkout** (MCP): Processes orders and handles the checkout flow
+
+**Example Usage**:
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/chat/shopping" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "I need gardening tools for beginners",
+    "context": {
+      "budget": "50",
+      "experience": "beginner"
+    }
+  }'
+```
+
 ### Docker Deployment
 
 1. **Build and run with docker-compose**
@@ -84,10 +135,10 @@ The API will be available at `http://localhost:8000`
 GET /api/v1/health
 ```
 
-#### Chat with Agent
+#### Chat with Plant Agent
 
 ```bash
-POST /api/v1/chat
+POST /api/v1/chat/plant
 Content-Type: application/json
 
 {
@@ -100,10 +151,40 @@ Content-Type: application/json
 }
 ```
 
-#### Agent Information
+#### Chat with Shopping Agent
 
 ```bash
-GET /api/v1/agent/info
+POST /api/v1/chat/shopping
+Content-Type: application/json
+
+{
+  "message": "I need to find gardening tools for my balcony garden",
+  "context": {
+    "budget": "100",
+    "space": "balcony",
+    "experience": "beginner"
+  }
+}
+```
+
+#### Agents Information
+
+```bash
+GET /api/v1/agents/info          # All agents
+GET /api/v1/agent/plant/info     # Plant agent only
+GET /api/v1/agent/shopping/info  # Shopping agent only
+```
+
+#### Scheduler Status
+
+```bash
+GET /api/v1/scheduler/status
+```
+
+#### List Scheduled Jobs
+
+```bash
+GET /api/v1/scheduler/jobs
 ```
 
 ### Example Usage

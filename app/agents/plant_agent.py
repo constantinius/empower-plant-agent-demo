@@ -42,23 +42,25 @@ Be friendly, encouraging, and remember that every plant parent is on a learning 
 
 You have access to MCP tools that can help you provide better assistance. Use them when appropriate to help users with their plant care needs."""
 
-# Create MCP tool configuration
+# Create MCP tool configuration for plant care
 mcp_config = Mcp(
     type="mcp",
     server_label="plantEmpowermentMcpServer",
     server_description="MCP server providing plant care tools and resources",
     server_url=settings.mcp_server_url,
-    headers={},  # Add any required headers here
+    headers={},
+    # Filter to only use plant care tools
+    allowed_tools={"allowed_tool_names": ["get-plant-care-guide"]},
 )
 
 # Create MCP tool
 mcp_tool = HostedMCPTool(tool_config=mcp_config)
 
-# Create the plant agent with MCP tools
+# Create the plant agent with MCP tools (focused on plant care only)
 plant_agent = Agent(
     name=AGENT_NAME,
     instructions=AGENT_INSTRUCTIONS,
-    model=settings.openai_model,
+    model=settings.openai_model_expansive,
     tools=[mcp_tool],
 )
 
