@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   plant-agent:
@@ -30,14 +30,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  # Optional: Add a reverse proxy (uncomment if needed)
-  # nginx:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - plant-agent
-  #   restart: unless-stopped

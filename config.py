@@ -12,15 +12,27 @@ load_dotenv()
 class Settings(BaseSettings):
     """Application settings."""
 
-    # OpenAI Configuration
-    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    openai_model_expansive: str = os.getenv("OPENAI_MODEL_EXPANSIVE", "gpt-4")
-    openai_model_cheap: str = os.getenv("OPENAI_MODEL_CHEAP", "gpt-5-mini")
-
-    # FastAPI Configuration
+    # API settings
     api_host: str = os.getenv("API_HOST", "0.0.0.0")
     api_port: int = int(os.getenv("API_PORT", "8000"))
     api_reload: bool = os.getenv("API_RELOAD", "true").lower() == "true"
+
+    # API tester settings
+    api_tester_enabled: bool = True
+    api_tester_base_interval_ms: int = (
+        20 * 60 * 1000
+    )  # 20 minutes base interval, every ~10 mins in peak times
+    api_tester_jitter_percent: int = 10
+
+    # OpenAI settings
+    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
+    agent_model: str = "gpt-5-mini"
+    light_model: str = "gpt-5-nano"
+
+    # MCP settings
+    mcp_server_url: str = (
+        "https://p01--empower-mcp--wc4d2bfkjcxy.kr842zyvg5.code.run/mcp"
+    )
 
     # Security
     secret_key: str = os.getenv("SECRET_KEY", "your-secret-key-change-this")
@@ -33,12 +45,6 @@ class Settings(BaseSettings):
     max_tokens: int = int(os.getenv("MAX_TOKENS", "1000"))
     temperature: float = float(os.getenv("TEMPERATURE", "0.7"))
 
-    # MCP Configuration
-    mcp_server_url: str = os.getenv(
-        "MCP_SERVER_URL",
-        "https://p01--empower-mcp--wc4d2bfkjcxy.kr842zyvg5.code.run/mcp",
-    )
-
     # Sentry Configuration
     sentry_dsn: str = os.getenv("SENTRY_DSN", "")
     sentry_environment: str = os.getenv("SENTRY_ENVIRONMENT", "development")
@@ -49,19 +55,10 @@ class Settings(BaseSettings):
         os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "1.0")
     )
 
-    # API Tester Configuration
-    api_tester_enabled: bool = os.getenv("API_TESTER_ENABLED", "true").lower() == "true"
-    api_tester_base_interval_ms: int = int(
-        os.getenv("API_TESTER_BASE_INTERVAL_MS", "120000")
-    )  # 2 minutes default
-    api_tester_jitter_percent: int = int(
-        os.getenv("API_TESTER_JITTER_PERCENT", "30")
-    )  # 30% jitter default
-
     class Config:
         env_file = ".env"
         case_sensitive = False
 
 
-# Global settings instance
+# Instantiate settings
 settings = Settings()

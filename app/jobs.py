@@ -27,7 +27,7 @@ class ApiTestItem:
 class ApiTester:
     """Python equivalent of the TypeScript CallerScript for testing API endpoints."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.base_interval_ms = int(settings.api_tester_base_interval_ms)
         self.server_url = f"http://{settings.api_host}:{settings.api_port}"
         self.jitter_percent = settings.api_tester_jitter_percent
@@ -39,84 +39,34 @@ class ApiTester:
         self.available_items: List[ApiTestItem] = [
             # Plant agent endpoints (doubled for 2x probability like in TS)
             ApiTestItem(
-                endpoint="/api/v1/chat/plant",
-                payload={
-                    "message": "My pothos leaves are turning yellow. What should I do?",
-                    "context": {"plant_type": "pothos", "location": "indoor"},
-                },
-                name="plant-care-pothos",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "low light", "maintenance": "high"},
+                name="buy-plants-low-light-high-maintenance",
             ),
             ApiTestItem(
-                endpoint="/api/v1/chat/plant",
-                payload={
-                    "message": "How often should I water my fiddle leaf fig?",
-                    "context": {"plant_type": "fiddle fig", "location": "indoor"},
-                },
-                name="plant-care-fiddle-fig",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "low light", "maintenance": "low"},
+                name="buy-plants-low-light-high-maintenance",
             ),
             ApiTestItem(
-                endpoint="/api/v1/chat/plant",
-                payload={
-                    "message": "My plant's leaves are drooping. What's wrong?",
-                    "context": {"symptoms": "drooping leaves"},
-                },
-                name="plant-diagnosis",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "medium light", "maintenance": "high"},
+                name="buy-plants-medium-light-high-maintenance",
             ),
             ApiTestItem(
-                endpoint="/api/v1/chat/plant",
-                payload={
-                    "message": "What's the best fertilizer for indoor plants?",
-                    "context": {"topic": "fertilizer"},
-                },
-                name="plant-fertilizer",
-            ),
-            # Shopping agent endpoints (doubled for 2x probability)
-            ApiTestItem(
-                endpoint="/api/v1/chat/shopping",
-                payload={
-                    "message": "I need a good fertilizer for my houseplants",
-                    "context": {"category": "fertilizer"},
-                },
-                name="shopping-fertilizer",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "medium light", "maintenance": "low"},
+                name="buy-plants-medium-light-low-maintenance",
             ),
             ApiTestItem(
-                endpoint="/api/v1/chat/shopping",
-                payload={
-                    "message": "Show me some plant pots for medium-sized plants",
-                    "context": {"category": "pots", "size": "medium"},
-                },
-                name="shopping-pots",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "full sun", "maintenance": "high"},
+                name="buy-plants-full-sun-high-maintenance",
             ),
             ApiTestItem(
-                endpoint="/api/v1/chat/shopping",
-                payload={
-                    "message": "I want to buy a grow light for my plants",
-                    "context": {"category": "lighting"},
-                },
-                name="shopping-lights",
-            ),
-            ApiTestItem(
-                endpoint="/api/v1/chat/shopping",
-                payload={
-                    "message": "What tools do I need for repotting plants?",
-                    "context": {"category": "tools", "task": "repotting"},
-                },
-                name="shopping-tools",
-            ),
-            # Info endpoints (normal probability)
-            ApiTestItem(endpoint="/api/v1/health", method="GET", name="health-check"),
-            ApiTestItem(
-                endpoint="/api/v1/agents/info", method="GET", name="agents-info"
-            ),
-            ApiTestItem(
-                endpoint="/api/v1/agent/plant/info",
-                method="GET",
-                name="plant-agent-info",
-            ),
-            ApiTestItem(
-                endpoint="/api/v1/agent/shopping/info",
-                method="GET",
-                name="shopping-agent-info",
+                endpoint="/api/v1/buy-plants",
+                payload={"light": "full sun", "maintenance": "low"},
+                name="buy-plants-full-sun-low-maintenance",
             ),
         ]
 
@@ -252,11 +202,11 @@ class ApiTester:
                 return
 
             item = self.get_random_item()
-            timestamp = datetime.now().isoformat()
+            ts = datetime.now().isoformat()
             emoji = self.get_emoji_for_endpoint(item.endpoint)
 
             logger.info(
-                f"\n{emoji} [{timestamp}] Calling {item.method} {item.endpoint} ({item.name})"
+                f"\n{emoji} [{ts}] Calling {item.method} {item.endpoint} ({item.name})"
             )
 
             url = f"{self.server_url}{item.endpoint}"
@@ -286,14 +236,12 @@ class ApiTester:
             while True:
                 # Calculate next interval
                 next_interval = self.calculate_next_interval()
-                seasonal_multiplier = self.get_seasonal_multiplier()
+                sm = self.get_seasonal_multiplier()
 
                 logger.info(
-                    f"⏰ Next call in {next_interval:.1f}s (seasonal: {seasonal_multiplier:.2f}x)"
+                    f"⏰ Next call in {next_interval:.1f}s (seasonal: {sm:.2f}x)"
                 )
-                print(
-                    f"⏰ Next call in {next_interval:.1f}s (seasonal: {seasonal_multiplier:.2f}x)"
-                )
+                print(f"⏰ Next call in {next_interval:.1f}s (seasonal: {sm:.2f}x)")
 
                 # Wait for the calculated interval
                 await asyncio.sleep(next_interval)

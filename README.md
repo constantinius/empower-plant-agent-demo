@@ -1,19 +1,14 @@
-# Multi-Agent AI System Demo
+# Simple Plant Care AI Agent
 
-A FastAPI-based multi-agent AI system with specialized agents for plant care and shopping, powered by the openai-agents library and OpenAI's GPT models.
+A simple FastAPI-based plant care AI assistant powered by the OpenAI Agents SDK. Just provide a plant name and get personalized care advice!
 
 ## Features
 
-- 🤖 **Multi-Agent Architecture**: Two specialized AI agents with intelligent handoff capabilities
-- 🔗 **MCP Integration**: Connects to external MCP servers with tool filtering per agent
-- 🌱 **Plant Care Agent**: Expert advice on plant health, care, and troubleshooting
-- 🛒 **Shopping Agent**: Product discovery and checkout assistance
-- 🔄 **Smart Handoffs**: Agents automatically transfer conversations when expertise is needed
-- 🚀 **FastAPI Backend**: Modern, fast, and well-documented API
-- 📊 **Sentry Observability**: Comprehensive error tracking, performance monitoring, and insights
-- 🐳 **Docker Support**: Easy deployment with Docker and docker-compose
-- 📚 **Interactive API Docs**: Built-in Swagger UI and ReDoc documentation
-- 🔧 **Configurable**: Environment-based configuration management
+- 🌱 **Simple Plant Care Agent**: Get care advice for any plant by name
+- 🛠️ **One Tool**: Basic plant care database with common houseplants
+- 🚀 **FastAPI Backend**: Modern, fast API with automatic docs
+- 📚 **Interactive API Docs**: Built-in Swagger UI at `/docs`
+- 🎯 **Minimal Dependencies**: Bare bones implementation following OpenAI Agents SDK
 
 ## Quick Start
 
@@ -21,7 +16,6 @@ A FastAPI-based multi-agent AI system with specialized agents for plant care and
 
 - Python 3.11+
 - OpenAI API key
-- Docker (optional, for containerized deployment)
 
 ### Installation
 
@@ -35,8 +29,7 @@ A FastAPI-based multi-agent AI system with specialized agents for plant care and
 2. **Set up environment variables**
 
    ```bash
-   cp .env.example .env
-   # Edit .env with your OpenAI API key and other settings
+   export OPENAI_API_KEY=sk-your-api-key-here
    ```
 
 3. **Install dependencies**
@@ -45,423 +38,118 @@ A FastAPI-based multi-agent AI system with specialized agents for plant care and
    pip install -r requirements.txt
    ```
 
-4. **Set up development environment (optional)**
-
-   ```bash
-   make dev-setup
-   ```
-
-   This installs pre-commit hooks for automatic code formatting and import sorting.
-
-5. **Run the application**
+4. **Run the application**
    ```bash
    python main.py
-   # or
-   make run
    ```
 
-The API will be available at `http://localhost:8000`
+The API will be available at `http://localhost:8000` with interactive docs at `http://localhost:8000/docs`.
 
-## Agents Overview
+## Usage
 
-The system includes two specialized AI agents, each with their own set of tools and capabilities:
+### API Endpoint
 
-### 🌱 Plant Care Agent (`/api/v1/chat/plant`)
+**POST** `/api/v1/plant-care`
 
-**Purpose**: Provides expert advice on plant health, care, and troubleshooting
+Request body:
 
-**Tools Available**:
-
-- **get-plant-care-guide** (MCP): Retrieves comprehensive plant care guides from the MCP server
-- **calculate_watering_schedule** (Local Function): Calculates personalized watering schedules based on plant type, pot size, season, and location
-
-**Smart Handoffs**: Automatically transfers to Shopping Agent when users ask about purchasing products, tools, or want to buy something
-
-**Example Usage**:
-
-```bash
-# Get personalized watering advice
-curl -X POST "http://localhost:8000/api/v1/chat/plant" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "How often should I water my succulent in winter?",
-    "context": {
-      "plant_type": "succulent",
-      "pot_size": "small",
-      "season": "winter"
-    }
-  }'
-
-# The agent will automatically use the watering calculator to provide:
-# - Specific watering frequency (e.g., "every 7 days")
-# - Seasonal adjustments for winter care
-# - Pot size considerations
-# - Plant-specific tips for succulents
-```
-
-### 🛒 Shopping Agent (`/api/v1/chat/shopping`)
-
-**Purpose**: Helps users find products and complete purchases
-
-**Tools Available**:
-
-- **get-products** (MCP): Retrieves available products based on search criteria
-- **checkout** (MCP): Processes orders and handles the checkout flow
-
-**Smart Handoffs**: Automatically transfers to Plant Care Agent when users ask about plant care, gardening advice, plant health issues, or how to care for plants
-
-**Example Usage**:
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/chat/shopping" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "I need gardening tools for beginners",
-    "context": {
-      "budget": "50",
-      "experience": "beginner"
-    }
-  }'
-```
-
-## Smart Agent Handoffs
-
-The multi-agent system features intelligent handoffs that automatically transfer conversations between agents when specialized expertise is needed.
-
-### How Handoffs Work
-
-1. **Automatic Detection**: Each agent monitors the conversation for topics outside their expertise
-2. **Seamless Transfer**: When a handoff is needed, the agent automatically transfers the conversation
-3. **Context Preservation**: The receiving agent gets full context of the previous conversation
-4. **Transparent Process**: Users experience a smooth transition without interruption
-
-### Handoff Scenarios
-
-#### Plant Agent → Shopping Agent
-
-The Plant Care Agent will transfer to the Shopping Agent when users:
-
-- Ask about purchasing gardening tools or supplies
-- Want to buy fertilizers, pots, or plant accessories
-- Need product recommendations for plant care
-- Express interest in making a purchase
-
-**Example**:
-
-```
-User: "My plant needs better drainage. What should I buy?"
-Plant Agent: "For better drainage, you'll need... Let me transfer you to our shopping expert who can help you find the right products."
-→ Transfers to Shopping Agent
-```
-
-#### Shopping Agent → Plant Agent
-
-The Shopping Agent will transfer to the Plant Care Agent when users:
-
-- Ask about plant care, health, or troubleshooting
-- Need gardening advice or growing tips
-- Have questions about plant identification
-- Want help with plant problems
-
-**Example**:
-
-```
-User: "I bought this fertilizer, but my plant's leaves are still yellow. What's wrong?"
-Shopping Agent: "It sounds like there might be other factors affecting your plant's health. Let me connect you with our plant care expert."
-→ Transfers to Plant Care Agent
-```
-
-### Benefits
-
-- **Specialized Expertise**: Each agent focuses on what they do best
-- **Better User Experience**: Users get the most relevant help without switching manually
-- **Comprehensive Support**: Complete coverage from advice to purchase to ongoing care
-- **Natural Conversation Flow**: Handoffs feel like talking to a knowledgeable team
-
-### Docker Deployment
-
-1. **Build and run with docker-compose**
-
-   ```bash
-   docker-compose up --build
-   ```
-
-2. **Or build and run manually**
-   ```bash
-   docker build -t plant-agent .
-   docker run -p 8000:8000 --env-file .env plant-agent
-   ```
-
-## API Usage
-
-### Endpoints
-
-#### Health Check
-
-```bash
-GET /api/v1/health
-```
-
-#### Chat with Plant Agent
-
-```bash
-POST /api/v1/chat/plant
-Content-Type: application/json
-
+```json
 {
-  "message": "My plant's leaves are turning yellow. What should I do?",
-  "context": {
-    "plant_type": "pothos",
-    "location": "indoor",
-    "light_conditions": "medium"
-  }
+  "plant_name": "pothos"
 }
 ```
 
-#### Chat with Shopping Agent
+Response:
 
-```bash
-POST /api/v1/chat/shopping
-Content-Type: application/json
-
+```json
 {
-  "message": "I need to find gardening tools for my balcony garden",
-  "context": {
-    "budget": "100",
-    "space": "balcony",
-    "experience": "beginner"
-  }
+  "response": "🌱 **Pothos Care Guide**\n\n**Watering**: Water when top inch of soil is dry (every 1-2 weeks)\n**Light**: Bright, indirect light\n**Pro Tip**: Very forgiving plant, great for beginners. Can tolerate low light.\n\n**General Care Reminders**:\n• Check soil moisture before watering\n• Ensure good drainage\n• Watch for signs of overwatering (yellow leaves)\n• Rotate plant occasionally for even growth",
+  "agent_name": "PlantCareAgent"
 }
 ```
 
-#### Agents Information
-
-```bash
-GET /api/v1/agents/info          # All agents
-GET /api/v1/agent/plant/info     # Plant agent only
-GET /api/v1/agent/shopping/info  # Shopping agent only
-```
-
-#### Scheduler Status
-
-```bash
-GET /api/v1/scheduler/status
-```
-
-#### List Scheduled Jobs
-
-```bash
-GET /api/v1/scheduler/jobs
-```
-
-### Example Usage
+### Direct Python Usage
 
 ```python
-import requests
+import asyncio
+from app.agents.simple_plant_agent import process_plant_query
 
-# Chat with the plant agent
-response = requests.post(
-    "http://localhost:8000/api/v1/chat",
-    json={
-        "message": "How often should I water my snake plant?",
-        "context": {
-            "plant_type": "snake plant",
-            "pot_size": "medium",
-            "location": "living room"
-        }
-    }
-)
+async def main():
+    advice = await process_plant_query("snake plant")
+    print(advice)
 
-print(response.json()["response"])
+asyncio.run(main())
 ```
 
-## Observability with Sentry
+### Example with curl
 
-The application includes comprehensive observability through Sentry integration:
+```bash
+curl -X POST "http://localhost:8000/api/v1/plant-care" \
+     -H "Content-Type: application/json" \
+     -d '{"plant_name": "monstera"}'
+```
 
-### Features
+## Supported Plants
 
-- **Error Tracking**: Automatic capture of exceptions and errors
-- **Performance Monitoring**: Transaction tracing for API requests and agent processing
-- **Custom Context**: Plant query context and metadata for better debugging
-- **Breadcrumbs**: Detailed execution flow tracking
-- **Release Tracking**: Version-based error tracking and deployment monitoring
+The agent has specific care information for:
 
-### Setup
+- Pothos
+- Snake Plant
+- Monstera
+- Fiddle Leaf Fig
+- Peace Lily
+- Rubber Plant
+- Succulents
 
-1. **Create a Sentry account** at [sentry.io](https://sentry.io)
-
-2. **Create a new project** for your Python/FastAPI application
-
-3. **Get your DSN** from the project settings
-
-4. **Configure environment variables**:
-
-   ```bash
-   SENTRY_DSN=https://your-dsn@sentry.io/project-id
-   SENTRY_ENVIRONMENT=production  # or development, staging, etc.
-   SENTRY_TRACES_SAMPLE_RATE=1.0  # 100% of transactions (adjust for production)
-   SENTRY_PROFILES_SAMPLE_RATE=1.0  # 100% profiling (adjust for production)
-   ```
-
-5. **For production**, consider reducing sample rates:
-   ```bash
-   SENTRY_TRACES_SAMPLE_RATE=0.1  # 10% of transactions
-   SENTRY_PROFILES_SAMPLE_RATE=0.1  # 10% profiling
-   ```
-
-### Monitoring Features
-
-- **Automatic Error Tracking**: All exceptions are automatically captured
-- **API Performance Monitoring**: FastAPI routes are automatically traced
-- **Database Query Tracing**: Automatic database performance monitoring
-- **HTTP Request Tracking**: Outbound HTTP requests are automatically traced
-- **Logging Integration**: Error-level logs are sent as Sentry events
-
-## Configuration
-
-Configure the application using environment variables or the `.env` file:
-
-| Variable                      | Description                        | Default                       |
-| ----------------------------- | ---------------------------------- | ----------------------------- |
-| `OPENAI_API_KEY`              | OpenAI API key                     | Required                      |
-| `OPENAI_MODEL`                | OpenAI model to use                | `gpt-4`                       |
-| `API_HOST`                    | Host to bind the server            | `0.0.0.0`                     |
-| `API_PORT`                    | Port to bind the server            | `8000`                        |
-| `SECRET_KEY`                  | Secret key for security            | `your-secret-key-change-this` |
-| `MAX_TOKENS`                  | Maximum tokens per response        | `1000`                        |
-| `TEMPERATURE`                 | AI response creativity (0-1)       | `0.7`                         |
-| `MCP_SERVER_URL`              | MCP server URL for tools           | `https://...`                 |
-| `SENTRY_DSN`                  | Sentry DSN for error tracking      | Optional                      |
-| `SENTRY_ENVIRONMENT`          | Sentry environment name            | `development`                 |
-| `SENTRY_TRACES_SAMPLE_RATE`   | Performance monitoring sample rate | `1.0`                         |
-| `SENTRY_PROFILES_SAMPLE_RATE` | Profiling sample rate              | `1.0`                         |
+For other plants, it provides general care advice and suggests trying the supported plants.
 
 ## Project Structure
 
 ```
-empower-plant-agent-demo/
-├── app/
-│   ├── __init__.py
-│   ├── agents/
-│   │   ├── __init__.py
-│   │   └── plant_agent.py  # Plant empowerment agent using openai-agents
-│   └── api/
-│       ├── __init__.py
-│       ├── auth.py         # Authentication utilities
-│       ├── models.py       # Pydantic models
-│       └── routes.py       # API routes
-├── config.py               # Configuration management
-├── main.py                # FastAPI application
-├── requirements.txt       # Python dependencies
-├── Dockerfile            # Docker configuration
-├── docker-compose.yml    # Docker Compose setup
-└── README.md             # This file
+app/
+├── agents/
+│   └── simple_plant_agent.py    # Main agent with OpenAI Agents SDK
+├── tools/
+│   └── simple_plant_tool.py     # Plant care tool/function
+└── api/
+    ├── models.py                # Pydantic request/response models
+    └── routes.py         # FastAPI routes
+
+main.py                          # FastAPI application entry point
+simple_example.py               # Direct usage example
+config.py                       # Configuration management
 ```
+
+## Configuration
+
+Set these environment variables:
+
+- `OPENAI_API_KEY`: Your OpenAI API key (required)
+- `light_model`: Model for the agent (default: "gpt-4o-mini")
+- `API_HOST`: API host (default: "0.0.0.0")
+- `API_PORT`: API port (default: 8000)
 
 ## Development
 
-### Development Setup
-
-For the best development experience with automatic import sorting and code formatting:
-
-1. **Install development dependencies**:
-
-   ```bash
-   make dev-setup
-   ```
-
-2. **VS Code users**: The project includes VS Code settings for automatic import sorting and formatting on save.
-
-3. **Manual formatting**:
-   ```bash
-   make format      # Format code with black and sort imports
-   make lint        # Run linting checks
-   make sort-imports # Sort imports only
-   ```
-
-### Running Tests
+Run the simple example:
 
 ```bash
-pytest
-# or
-make test
+python simple_example.py
 ```
 
-### Code Quality Tools
-
-The project uses several tools to maintain code quality:
-
-- **isort**: Automatic import sorting (configured to work with black)
-- **black**: Code formatting
-- **flake8**: Linting
-- **mypy**: Type checking
-- **pre-commit**: Git hooks for automatic code quality checks
-
-### Available Make Commands
+Check the API docs:
 
 ```bash
-make install      # Install dependencies
-make dev-setup    # Set up development environment
-make format       # Format code and sort imports
-make lint         # Run all linting checks
-make test         # Run tests
-make run          # Run the application
-make docker-run   # Run with Docker
-make clean        # Clean up generated files
+python main.py
+# Visit http://localhost:8000/docs
 ```
 
-### Adding New Agents
+## OpenAI Agents SDK
 
-1. Create a new agent module using `openai_agents.Agent` directly as a module variable:
+This project follows the [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) patterns:
 
-   ```python
-   # app/agents/my_agent.py
-   from openai_agents import Agent, Runner
+- **Agent**: Simple plant care assistant with instructions
+- **Tool**: Function tool for plant care advice
+- **Runner**: Handles the agent execution loop
 
-   # Create agent as module variable
-   my_agent = Agent(
-       name="MyAgent",
-       instructions="You are a helpful assistant specialized in...",
-       model="gpt-4"
-   )
-
-   async def process_message(message: str) -> str:
-       result = await Runner.run(my_agent, message)
-       return result.final_output
-   ```
-
-2. Import and use in `app/api/routes.py`:
-
-   ```python
-   from app.agents.my_agent import my_agent, process_message
-   ```
-
-3. Update the main application to include new endpoints
-
-## API Documentation
-
-Once the application is running, visit:
-
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For questions or issues, please open an issue in the repository or contact the maintainers.
-
----
-
-Happy plant parenting! 🌿
+The implementation is minimal and focused, demonstrating the core concepts without complexity.
