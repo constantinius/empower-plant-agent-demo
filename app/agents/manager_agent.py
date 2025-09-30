@@ -84,22 +84,16 @@ async def process_user_request(light: str, maintenance: str) -> str:
     Returns:
         Confirmation of plant purchase
     """
-    try:
-        logging.debug(
-            f"manager_agent invoked with light: {light}, maintenance: {maintenance}"
-        )
-        # Create a message with user preferences
-        message = (
-            f"I want to buy plants for {light} light and {maintenance} maintenance."
-        )
 
-        # Run the agent to get recommendations
-        result = await Runner.run(manager_agent, message)
+    logging.debug(
+        f"manager_agent invoked with light: {light}, maintenance: {maintenance}"
+    )
+    # Create a message with user preferences
+    message = f"I want to buy plants for {light} light and {maintenance} maintenance."
 
-        logging.debug(f"manager_agent completed purchase: {result.final_output}")
-        print(result)
-        return str(result.final_output)
+    # Run the agent to get recommendations
+    result = await Runner.run(manager_agent, message)
 
-    except Exception as e:
-        logging.error(f"Error in manager_agent: {str(e)}")
-        return f"Sorry, I encountered an error processing your request: {str(e)}"
+    logging.debug(f"manager_agent completed purchase: {result.final_output}")
+    print(result)
+    return str(result.final_output)

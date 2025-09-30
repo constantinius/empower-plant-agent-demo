@@ -19,6 +19,7 @@ import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.openai import OpenAIIntegration
 from sentry_sdk.integrations.openai_agents import OpenAIAgentsIntegration
 
@@ -31,7 +32,10 @@ sentry_sdk.init(
     environment=settings.sentry_environment,
     traces_sample_rate=settings.sentry_traces_sample_rate,
     profiles_sample_rate=settings.sentry_profiles_sample_rate,
-    integrations=[OpenAIAgentsIntegration()],
+    integrations=[
+        FastApiIntegration(),
+        OpenAIAgentsIntegration(),
+    ],
     disabled_integrations=[OpenAIIntegration()],
     send_default_pii=True,
 )

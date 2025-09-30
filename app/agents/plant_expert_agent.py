@@ -49,21 +49,15 @@ async def get_recommendations(light: str, maintenance: str) -> str:
     Returns:
         Recommended plants
     """
-    try:
-        logging.debug(
-            f"PlantExpertAgent invoked with light: {light}, maintenance: {maintenance}"
-        )
-        # Create a message with user preferences
-        msg = f"Reccomend plants for {light} light and {maintenance} maintenance."
 
-        # Run the agent
-        result = await Runner.run(plant_expert_agent, msg)
+    logging.debug(
+        f"PlantExpertAgent invoked with light: {light}, maintenance: {maintenance}"
+    )
+    # Create a message with user preferences
+    msg = f"Reccomend plants for {light} light and {maintenance} maintenance."
 
-        logging.debug(
-            f"PlantExpertAgent provided recommendations: {result.final_output}"
-        )
-        return str(result.final_output)
+    # Run the agent
+    result = await Runner.run(plant_expert_agent, msg)
 
-    except Exception as e:
-        logging.error(f"Error in PlantExpertAgent: {str(e)}")
-        return f"Sorry, I encountered an error getting recommendations: {str(e)}"
+    logging.debug(f"PlantExpertAgent provided recommendations: {result.final_output}")
+    return str(result.final_output)

@@ -181,19 +181,6 @@ class ApiTester:
         ) * self.get_seasonal_multiplier()
         return self.add_jitter(seasonal_interval)
 
-    def get_emoji_for_endpoint(self, endpoint: str) -> str:
-        """Get emoji for endpoint type."""
-        if "/chat/plant" in endpoint:
-            return "🌱"
-        elif "/chat/shopping" in endpoint:
-            return "🛒"
-        elif "/health" in endpoint:
-            return "💚"
-        elif "/info" in endpoint:
-            return "ℹ️"
-        else:
-            return "🔧"
-
     async def execute_random_call(self) -> None:
         """Execute a random API call."""
         try:
@@ -203,7 +190,7 @@ class ApiTester:
 
             item = self.get_random_item()
             ts = datetime.now().isoformat()
-            emoji = self.get_emoji_for_endpoint(item.endpoint)
+            emoji = "🌱"
 
             logger.info(
                 f"\n{emoji} [{ts}] Calling {item.method} {item.endpoint} ({item.name})"
