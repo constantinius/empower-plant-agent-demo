@@ -17,13 +17,6 @@ class Settings(BaseSettings):
     api_port: int = int(os.getenv("API_PORT", "8000"))
     api_reload: bool = os.getenv("API_RELOAD", "true").lower() == "true"
 
-    # API tester settings
-    api_tester_enabled: bool = True
-    api_tester_base_interval_ms: int = (
-        20 * 60 * 1000
-    )  # 20 minutes base interval, every ~10 mins in peak times
-    api_tester_jitter_percent: int = 10
-
     # OpenAI settings
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     agent_model: str = "gpt-5-mini"
